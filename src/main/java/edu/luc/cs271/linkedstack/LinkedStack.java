@@ -9,7 +9,7 @@ public class LinkedStack<E> implements IStack<E> {
   /** The topmost node of this stack. The stack gets pushed down from here. */
   private Node<E> top;
 
-  private int n = 0;
+  private int size = 0;
 
   // TODO why don't we need an explicit constructor?
 
@@ -17,7 +17,7 @@ public class LinkedStack<E> implements IStack<E> {
   public E push(final E obj) {
     // DONE
     top = new Node<E>(obj, top);
-    n++;
+    size++;
     return obj;
   }
 
@@ -36,10 +36,13 @@ public class LinkedStack<E> implements IStack<E> {
     if (isEmpty()) {
       throw new NoSuchElementException();
     }
+    else {
     Node<E> newTop = top;
+
     top = top.next;
-    n--;
+    size--;
     return newTop.data;
+  }
   }
 
   @Override
@@ -52,16 +55,39 @@ public class LinkedStack<E> implements IStack<E> {
     }
   }
 
-  @Override
-  public List<E> asList() {
-    // DONE implement using an ArrayList preallocated with the right size
-    // DONE add any instance variable(s) required to support this
-    List<E> list = new ArrayList<E>(n);
-    while (top != null) {
-      list.add(top.data);
-      top = top.next;
+ @Override
+    public List<E> asList() {
+        final ArrayList<E> result = new ArrayList<>(size);
+        populateList(top, result); // TODO replace null with the right reference
+        return result;
     }
 
-    return list;
-  }
+    private void populateList(final Node<E> curr, final List<E> result) {
+        if(curr == null){
+            return;
+        }
+        else{
+            result.add(curr.data);
+            populateList(curr.next, result);
+        }
+    }
+
+    @Override
+    public List<E> asFifoList() {
+        final ArrayList<E> result = new ArrayList<>(size);
+        populateFifoList(top, result); // TODO replace null with the right reference
+        return result;
+    }
+
+    private void populateFifoList(final Node<E> curr, final List<E> result) {
+        if(curr == null){
+            return;
+        }
+        else{
+         
+            E data = curr.data;
+            populateFifoList(curr.next, result);
+            result.add(data);
+        }
+    }
 }
